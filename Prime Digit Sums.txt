@@ -1,0 +1,87 @@
+using System; using System.Collections; using System.Collections.Generic; using System.IO; using System.Linq; using System.Text;
+
+class Solution4 { const int NMAX = 400001; const int R = 1000000007; static bool[] PRIME = new bool[] { false, false, true, true, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, true, false, true }; static void Main(String[] args) { TextReader tIn = Console.In; TextWriter tOut = Console.Out;
+
+    int Q = int.Parse(tIn.ReadLine());
+    int[] QRY = new int[Q];
+    HashSet<int> QHS = new HashSet<int>();
+    for (int q = 0; q < Q; q++)
+    {
+        QRY[q] = int.Parse(tIn.ReadLine());
+        QHS.Add(QRY[q]);
+    }
+
+    List<int[]> xy3 = new List<int[]>();
+    for (int a0 = 0; a0 <= 9; a0++)
+        for (int a1 = 0; a1 <= 9; a1++)
+            for (int a2 = 0; a2 <= 9; a2++)
+                if (PRIME[a0 + a1 + a2])
+                    xy3.Add(new int[] { a0, a1, a2 });
+    int[][] x3 = xy3.ToArray();
+
+    List<int[]> xy4 = new List<int[]>();
+    foreach (int[] b3 in x3)
+        for (int b = 0; b <= 9; b++)
+            if (PRIME[b3[0] + b3[1] + b3[2] + b] && PRIME[b3[1] + b3[2] + b])
+                xy4.Add(new int[] { b3[0], b3[1], b3[2], b });
+    int[][] x4 = xy4.ToArray();
+
+    List<int[]> xy5 = new List<int[]>();
+    foreach (int[] c4 in x4)
+        for (int c = 0; c <= 9; c++)
+            if (PRIME[c4[0] + c4[1] + c4[2] + c4[3] + c] && PRIME[c4[1] + c4[2] + c4[3] + c] && PRIME[c4[1] + c4[2] + c4[3]] && PRIME[c4[2] + c4[3] + c])
+                xy5.Add(new int[] { c4[0], c4[1], c4[2], c4[3], c });
+    int[][] x5 = xy5.ToArray();
+
+    int[] y5 = new int[10 * 10 * 10 * 10 * 10];
+    for (int i = 0; i < 10 * 10 * 10 * 10 * 10; i++) y5[i] = -1;
+    for (int i = 0; i < x5.Length; i++)
+        y5[(((x5[i][0] * 10 + x5[i][1]) * 10 + x5[i][2]) * 10 + x5[i][3]) * 10 + x5[i][4]] = i;
+
+    int[][] xx5 = new int[x5.Length][];
+    int[] xx0 = new int[10];
+    for (int i = 0; i < x5.Length; i++)
+    {
+        int nxx0 = 0;
+        for (int x = 0; x <= 9; x++)
+        {
+            int y = y5[(((x5[i][1] * 10 + x5[i][2]) * 10 + x5[i][3]) * 10 + x5[i][4]) * 10 + x];
+            if (y >= 0) xx0[nxx0++] = y;
+        }
+        xx5[i] = new int[nxx0];
+        Array.Copy(xx0, 0, xx5[i], 0, nxx0);
+    }
+
+    long[] DPN = new long[NMAX];
+    DPN[1] = 9;
+    DPN[2] = 90;
+    DPN[3] = x3.Where(p => p[0] > 0).Count();
+    DPN[4] = x4.Where(p => p[0] > 0).Count();
+
+    int[] DP0 = new int[x5.Length];
+    int[] DP1 = new int[x5.Length];
+
+    for (int i = 0; i < x5.Length; i++)
+        if (x5[i][0] > 0) { 
+            DP0[i] = 1;
+            DPN[5]++;
+        }
+
+    for (int n = 6; n < NMAX; n++)
+    {
+        Buffer.BlockCopy(DP0, 0, DP1, 0, 4 * DP0.Length);
+        Array.Clear(DP0, 0, DP0.Length);
+        for (int i = 0; i < x5.Length; i++)
+            if (DP1[i] > 0)
+                foreach (int xx in xx5[i])
+                    DP0[xx] = (int)(((long)DP0[xx] + DP1[i]) % R);
+
+        if (QHS.Contains(n))
+            for (int i = 0; i < DP0.Length; i++)
+                DPN[n] = (DPN[n] + DP0[i]) % R;
+    }
+
+    for (int q = 0; q < Q; q++)
+        tOut.WriteLine(DPN[QRY[q]]);
+}
+}
