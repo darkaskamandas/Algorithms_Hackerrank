@@ -1,0 +1,63 @@
+#include #include #include #include #include #include #include #include #include #include #include #include #include #include #include #include #include #include #include #include
+
+/* // C++ 11 stuff
+
+#include <unordered_set> #include <unordered_map> #include #include
+
+#define tup(name, pos) get<(pos)>(name) #define A1(type, size) array <type, size> #define A2(type, s1, s2) A1(A1(type, s2), s1) #define A3(type, s1, s2, s3) A1(A2(type, s2, s3), s1)
+
+//*/
+
+using namespace std;
+
+typedef long long LL; typedef unsigned long long ULL; typedef pair <int, int> pnt;
+
+#define FI(i,a) for (int i=0; i<(a); ++i) #define FOR(i,s,e) for (int i=(s); i<(e); ++i) #define MEMS(a,b) memset(a,b,sizeof(a)) #define pb push_back #define mp make_pair #define ALL(a) a.begin(),a.end() #define V(t) vector < t > #define MAX(a,b) ((a)>(b)?(a):(b)) #define MIN(a,b) ((a)<(b)?(a):(b)) #define ABS(a) ((a)>(0)?(a):(-(a))) #define ALL(a) a.begin(),a.end()
+
+#define dout(a) cerr << a << endl #define sout(a) cerr << a << " " #define lbl cerr << "debug_label" << endl;
+
+const double pi = 3.14159265358979323846264338327950288419716939937511; const double eps = 1e-9;
+
+//* char ch_ch_ch[1<<20]; inline string gs() {scanf("%s",ch_ch_ch); return string(ch_ch_ch);} inline string gl() {gets(ch_ch_ch); return string(ch_ch_ch);} inline int gi() {int x; scanf("%d",&x); return x;} //*/
+
+const int inf = 1000000000;
+
+// code starts here
+
+int n; V(int) a; V(LL) sum;
+
+void solution() {
+
+n = gi();
+int K = gi();
+FI(i,n) a.pb(gi());
+sort(ALL(a));
+sum.resize(n);
+LL res = inf*1ll*inf;
+sum[0] = a[0];
+FOR(i,1,n) sum[i] = a[i] + sum[i-1];
+LL cur = 0;
+FOR(i,1,K) cur += a[i]*1ll*i - sum[i-1];
+res = cur;
+if (K > 1) FOR(i,K,n) {
+    cur += (K-1)*1ll*a[i] - (sum[i-1] - sum[i-K]);
+    cur -= -(K-1)*1ll*a[i-K]  + (sum[i-1] - sum[i-K]);
+    res = min(res,cur);
+}
+
+cout << res << endl;
+}
+
+// code ends here
+
+int main(int argc, char** argv) {
+
+#ifdef IGEL_ACM freopen("in.txt","r",stdin); //freopen("out.txt", "w", stdout); clock_t beg_time = clock(); #else //freopen(argv[1],"r",stdin); //freopen("painting.in", "r", stdin); //freopen("painting.out", "w", stdout);
+
+#endif
+
+solution();
+#ifdef IGEL_ACM fprintf(stderr,"*** Time: %.3lf **\n",1.0(clock()-beg_time)/CLOCKS_PER_SEC); #endif
+
+return 0;
+}
