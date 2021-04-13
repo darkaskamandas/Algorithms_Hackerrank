@@ -1,0 +1,41 @@
+#!/bin/python
+
+import sys from collections import Counter MOD=10**9+7
+
+n = int(raw_input().strip()) m = map(int, raw_input().strip().split(' '))
+
+your code goes here
+filled={} appendables = {(0,0):0}
+
+lastVal=-1 for val in m: nextFilled={} nextAppendables={} if val>lastVal: for (nums,maxNums) in appendables: if nums+1==maxNums: if not (maxNums,maxNums) in nextFilled: nextFilled[(maxNums,maxNums)]=0 nextFilled[(maxNums,maxNums)]=(nextFilled[(maxNums,maxNums)]+appendables[(nums,maxNums)])%MOD elif maxNums==0: if not (nums+1,maxNums) in nextAppendables: nextAppendables[(nums+1,maxNums)]=0 nextAppendables[(nums+1,maxNums)]=(nextAppendables[(nums+1,maxNums)]+1)%MOD else: if not (nums+1,maxNums) in nextAppendables: nextAppendables[(nums+1,maxNums)]=0 nextAppendables[(nums+1,maxNums)]=(nextAppendables[(nums+1,maxNums)]+appendables[(nums,maxNums)]*(maxNums-nums))%MOD if nums==1: if not (1,nums) in nextFilled: nextFilled[(1,nums)]=0 nextFilled[(1,nums)]=(nextFilled[(1,nums)]+appendables[(nums,maxNums)]*nums)%MOD elif nums>1: if not (1,nums) in nextAppendables: nextAppendables[(1,nums)]=0 nextAppendables[(1,nums)]=(nextAppendables[(1,nums)]+appendables[(nums,maxNums)]*nums)%MOD
+
+else:
+    for (nums,maxNums) in appendables:
+        if nums==1:
+            if not (1,1) in nextFilled:
+                nextFilled[(1,1)]=0
+            nextFilled[(1,1)]=(nextFilled[(1,1)]+appendables[(nums,maxNums)])%MOD
+        else:
+            if not (1,nums) in nextAppendables:
+                nextAppendables[(1,nums)]=0
+            nextAppendables[(1,nums)]=(nextAppendables[(1,nums)]+appendables[(nums,maxNums)]*nums)%MOD
+for (nums,maxNums) in filled:
+    if nums==1:
+        if not (1,1) in nextFilled:
+            nextFilled[(1,1)]=0
+        nextFilled[(1,1)]=(nextFilled[(1,1)]+filled[(nums,maxNums)])%MOD
+    else:
+        if not (1,nums) in nextAppendables:
+            nextAppendables[(1,nums)]=0
+        nextAppendables[(1,nums)]=(nextAppendables[(1,nums)]+filled[(nums,maxNums)]*nums)%MOD   
+ 
+lastVal=val
+appendables=nextAppendables
+filled=nextFilled
+res=0
+
+for val in filled.values(): res=(res+val)%MOD
+
+for val in appendables.values(): res=(res+val)%MOD
+
+print res
